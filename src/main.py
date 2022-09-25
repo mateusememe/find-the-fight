@@ -23,4 +23,4 @@ filename = st.file_uploader(help="Select a input video...",
 data_load_state = st.text('Loading data...')
 video_bytes = load_video(filename=filename)
 data_load_state.text("Done! (using st.cache)")
-st.video(filename.getvalue())
+st.video(video_bytes)
