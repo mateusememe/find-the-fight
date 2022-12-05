@@ -1,30 +1,23 @@
-from modules.TrainModel.train_model import TrainModel
-from keras.layers import StringLookup, Dropout, Dense, Bidirectional, LSTM, Layer, GlobalAveragePooling2D, Attention
-from livelossplot.inputs.keras import PlotLossesCallback
-from sklearn.model_selection import train_test_split
-from keras.callbacks import ModelCheckpoint
-from google.colab.patches import cv2_imshow
-from keras.applications import xception
-from wandb.keras import WandbCallback
-from keras.models import Sequential
-from keras.utils import np_utils
-from keras import backend as K
-from keras import Input, Model
-from imutils import paths
-from copy import deepcopy
-import tensorflow as tf
-from tqdm import tqdm
-import pandas as pd
+# from keras.layers import StringLookup, Dropout, Dense, Bidirectional, LSTM, Layer, GlobalAveragePooling2D, Attention
+# from livelossplot.inputs.keras import PlotLossesCallback
+# from sklearn.model_selection import train_test_split
+# from keras.callbacks import ModelCheckpoint
+# from keras.applications import xception
+# from keras.models import Sequential
+# from keras.utils import np_utils
+# from keras import backend as K
+# from keras import Input, Model
+# from imutils import paths
+# from copy import deepcopy
+# import tensorflow as tf
+# from tqdm import tqdm
+# import pandas as pd
 import numpy as np
-
+from training.Training import Training
+from hyperparams import *
 class Inference:
   def __init__(self) -> None:
-    self.IMG_SIZE = 299
-    self.BATCH_SIZE = 10
-    self.EPOCHS = 25
-    self.MAX_SEQ_LENGTH = 10
-    self.NUM_FEATURES = 2048
-    self.fight_model = TrainModel()
+    self.fight_model = Training.TrainModel()
 
   def prepare_single_video(self, frames):
     frames = frames[None, ...]

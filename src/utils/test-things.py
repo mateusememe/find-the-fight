@@ -1,3 +1,3 @@
-import torch
+import keras
 
-print(torch.cuda.get_device_name())
+print(keras.cuda.get_device_name())

@@ -1,28 +1,15 @@
 from keras.layers import StringLookup, Dropout, Dense, Bidirectional, LSTM, Layer, GlobalAveragePooling2D, Attention
 from livelossplot.inputs.keras import PlotLossesCallback
-from sklearn.model_selection import train_test_split
 from keras.callbacks import ModelCheckpoint
-from google.colab.patches import cv2_imshow
 from keras.applications import xception
-from wandb.keras import WandbCallback
 from keras.optimizers import adam_v2
-from keras.models import Sequential
 from keras.metrics import Recall
 from keras.utils import np_utils
 from keras import backend as K
 from keras import Input, Model
-from imutils import paths
-from copy import deepcopy
-import tensorflow as tf
-from tqdm import tqdm
-import pandas as pd
 import numpy as np
-import imageio
-import shutil
-import wandb
 import cv2
-import os
-
+from hyperparams import *
 class attention(Layer):
   def __init__(self,**kwargs):
     super(attention,self).__init__(**kwargs)
@@ -48,7 +35,7 @@ class attention(Layer):
     context = K.sum(context, axis=1)
     return context
 
-class TrainModel:
+class Training:
   def __init__(self) -> None:
     self.fight_model = None
     self.train_labels = None
