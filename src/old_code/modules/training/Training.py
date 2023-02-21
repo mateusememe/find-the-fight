@@ -10,6 +10,7 @@ from keras import Input, Model
 import numpy as np
 import cv2
 from hyperparams import *
+
 class attention(Layer):
   def __init__(self,**kwargs):
     super(attention,self).__init__(**kwargs)
