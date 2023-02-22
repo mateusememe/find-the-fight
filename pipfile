@@ -11,3 +11,4 @@ imageio==2.25
 ipython==8.10
 streamlit
 ffmpeg-python
+imutils
