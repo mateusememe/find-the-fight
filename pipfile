@@ -1,0 +1,13 @@
+tensorflow==2.11
+# tensorflow-gpu
+keras-attention
+opencv-python==4.7.0.68
+pandas==1.5.3
+livelossplot==0.5.5
+matplotlib==3.7
+tqdm==4.64
+scikit-learn==1.2.1
+imageio==2.25
+ipython==8.10
+streamlit
+ffmpeg-python
