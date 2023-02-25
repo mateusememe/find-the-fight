@@ -51,6 +51,7 @@ class Preprocessing:
 
     return np.array(video_frames), video_frames
 
+  # TODO: Make a generic for prepare all datasets
   def prepare_dataframe(self):
     violent_videos_paths = list(paths.list_files(f"{self.dataset_path}\\violent"))
     non_violent_videos_paths = list(paths.list_files(f"{self.dataset_path}\\non-violent"))
