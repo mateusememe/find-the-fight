@@ -1,6 +1,5 @@
-
 import os
-from constants import MAX_FRAMES, IMG_SHAPE, VIOLENCE_DETECTION_DATASET_PATH
+from constants import MAX_FRAMES, IMG_SHAPE, DATASETS_PATH
 from imutils import paths
 import shutil
 import pandas as pd
@@ -12,8 +11,8 @@ class Preprocessing:
     self.dataset = None
     self.test_data = None
     self.train_data = None
-    self.dataset_path = dataset_path
-    self.output_path = f"{dataset_path}\\data"
+    self.dataset_path = DATASETS_PATH[dataset_path]
+    self.output_path = f"{self.dataset_path}\\data"
 
   def crop_center_square(self, frame):
     y, x = frame.shape[0:2]
@@ -51,15 +50,34 @@ class Preprocessing:
 
     return np.array(video_frames), video_frames
 
-  # TODO: Make a generic for prepare all datasets
+  def rename_files(self):
+    violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\violence"))
+    non_violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\non-violence"))
+
+    for index, violence_path in enumerate(violence_videos_paths):
+      video_name = violence_path.split("\\")[-1]
+      video_extension = video_name.split(".")[-1]
+      new_violence_path = violence_path.replace(video_name, f"violence-{index+1}.{video_extension}")
+
+      print(new_violence_path)
+      os.rename(violence_path, new_violence_path)
+
+    for index, violence_path in enumerate(non_violence_videos_paths):
+      video_name = violence_path.split("\\")[-1]
+      video_extension = video_name.split(".")[-1]
+      new_non_violence_path = violence_path.replace(video_name, f"non-violence-{index+1}.{video_extension}")
+
+      print(new_non_violence_path)
+      os.rename(violence_path, new_non_violence_path)
+
   def prepare_dataframe(self):
-    violent_videos_paths = list(paths.list_files(f"{self.dataset_path}\\violent"))
-    non_violent_videos_paths = list(paths.list_files(f"{self.dataset_path}\\non-violent"))
+    violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\violence"))
+    non_violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\non-violence"))
 
     extract_class = lambda video_name: video_name.split(self.dataset_path)[1].split("\\")[1]
-    extract_video_name = lambda video_name: video_name.split(self.dataset_path)[1]
+    extract_video_name = lambda video_name: video_name.split(self.dataset_path)[1].split("\\")[2]
 
-    all_videos_path = violent_videos_paths + non_violent_videos_paths
+    all_videos_path = violence_videos_paths + non_violence_videos_paths
 
     self.dataset = pd.DataFrame()
 
@@ -78,13 +96,20 @@ class Preprocessing:
       videoPath = os.path.join(join_path, videoFile)
       shutil.copy2(videoPath, self.output_path)
 
-    print(f"Total videos: {len(os.listdir(self.output_path))}")
+
+    print(f"\nTotal Videos: {len(os.listdir(self.output_path))}")
 
   def load_data(self):
-    self.prepare_dataframe()
+    dataset_name = self.dataset_path.split("\\")[-1]
+    print(f"\n\n### Selected Dataset: {dataset_name}")
 
+    self.prepare_dataframe()
+    print("\n\t\t     Dataset HEAD")
     print(self.dataset.head())
 
-preprocessing = Preprocessing(VIOLENCE_DETECTION_DATASET_PATH, )
+    self.move_videos()
 
-preprocessing.load_data()
+# preprocessing = Preprocessing(dataset_path="VIOLENCE_DETECTION_DATASET_PATH")
+
+# preprocessing.load_data()
+# preprocessing.rename_files() for VIOLENCE_DETECTION_DATASET_PATH

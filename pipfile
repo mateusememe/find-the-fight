@@ -1,5 +1,4 @@
-tensorflow==2.11
-# tensorflow-gpu
+# installed on conda tensorflow-gpu
 keras-attention
 opencv-python==4.7.0.68
 pandas==1.5.3
