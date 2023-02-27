@@ -1,19 +1,20 @@
 import copy
-from datetime import date
 import numpy as np
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Attention, TimeDistributed, Flatten, Dense, Bidirectional, LSTM, Dropout
-from tensorflow.keras.callbacks import ModelCheckpoint
-# from livelossplot.inputs.keras import PlotLossesCallback
+import pandas as pd
+from datetime import date
 from tensorflow.keras import utils
-# from keras_attention import Attention
-from tensorflow.keras.applications.xception import Xception
+from preprocessing import Preprocessing
 from tensorflow.keras.metrics import Recall
 from tensorflow.keras.optimizers import Adam
-
+from tensorflow.keras.models import Sequential
+from sklearn.model_selection import train_test_split
 from constants import BATCH_SIZE, EPOCHS, MAX_FRAMES
-from preprocessing import Preprocessing
+from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.applications.xception import Xception
+from tensorflow.keras.layers import Attention, TimeDistributed, Flatten, Dense, Bidirectional, LSTM, Dropout
+# from livelossplot.inputs.keras import PlotLossesCallback
+# from keras_attention import Attention
 
 class HumanViolenceDetector:
   def __init__(self) -> None:
@@ -60,11 +61,21 @@ class HumanViolenceDetector:
     self.model.compile(loss="mean_squared_error", optimizer=adam, metrics=["accuracy", Recall()])
 
   # TODO: Make a repeat to persist the shape (10, 299, 299, 3) in a list to train the model
-  def load_frames_from_videos(self):
-    video_paths = self.preprocessing.dataset["video_name"].values.to_list()
-    labels = np.array(self.preprocessing.dataset["class"].values)
+  def load_frames_from_videos(self, dataframe: pd.DataFrame):
+    tokenizer = Tokenizer()
+    video_paths = list(dataframe["video_name"].values)
+    tokenizer.fit_on_texts(dataframe["class"].values)
+    labels = np.array([[token[0]-1] for token in tokenizer.texts_to_sequences(dataframe["class"].values)])
 
+    out_data = []
+    out_labels = []
 
+    for index_video_path in range(len(video_paths)):
+      frames = self.preprocessing.load_video(path=video_paths[index_video_path], class_subpath=dataframe["class"].values[index_video_path])
+      out_data.append(frames)
+      out_labels.append(labels[index_video_path])
+
+    return out_data, out_labels
 
   def prepare_data(self):
     train_df, test_df = train_test_split(self.preprocessing.dataset, test_size = 0.30, stratify=self.preprocessing.dataset['class'])
@@ -104,3 +115,7 @@ class HumanViolenceDetector:
 
 violence_detector = HumanViolenceDetector()
 violence_detector.prepare_data()
+out_data, out_labels = violence_detector.load_frames_from_videos(dataframe=violence_detector.preprocessing.train_data)
+
+print(f"data length: {len(out_data)}\nlabels length: {len(out_labels)}\n")
+

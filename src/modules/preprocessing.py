@@ -21,8 +21,9 @@ class Preprocessing:
     start_y = (y // 2) - (min_dim // 2)
     return frame[start_y : start_y + min_dim, start_x : start_x + min_dim]
 
-  def load_video(self, path: str):
-    cap = cv2.VideoCapture(path)
+  def load_video(self, path: str, class_subpath: str):
+    temp_path = f"{self.dataset_path}\\{path}"
+    cap = cv2.VideoCapture(f"{self.dataset_path}\\{class_subpath}\\{path}")
     video_frames = []
 
     try:
@@ -52,7 +53,7 @@ class Preprocessing:
 
   def rename_files(self):
     violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\violence"))
-    non_violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\non-violence"))
+    non_violence_videos_paths = list(paths.list_files(f"{self.dataset_path}\\nonViolence"))
 
     for index, violence_path in enumerate(violence_videos_paths):
       video_name = violence_path.split("\\")[-1]
