@@ -12,14 +12,14 @@ from constants import BATCH_SIZE, EPOCHS, MAX_FRAMES
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.applications.xception import Xception
-from tensorflow.keras.layers import Attention, TimeDistributed, Flatten, Dense, Bidirectional, LSTM, Dropout
+from tensorflow.keras.layers import TimeDistributed, Flatten, Dense, Bidirectional, LSTM, Dropout
 # from livelossplot.inputs.keras import PlotLossesCallback
 # from keras_attention import Attention
 
 class HumanViolenceDetector:
   def __init__(self) -> None:
     self.model = Sequential()
-    self.preprocessing = Preprocessing(dataset_path="VIOLENCE_DETECTION_DATASET_PATH")
+    self.preprocessing = Preprocessing(dataset_path="PELICULAS_DATASET_PATH")
     self.preprocessing.load_data()
     self.label_vocabulary = None
 
@@ -49,16 +49,16 @@ class HumanViolenceDetector:
     self.model.add(Dropout(0.4))
 
     # Add a Attention layer
-    self.model.add(Attention())
+    # self.model.add(Attention())
 
     self.model.add(Dense(1024, activation="relu"))
     self.model.add(Dense(1024, activation="hard_sigmoid"))
 
     # Add a classification layer
-    self.model.add(Dense(2, activation="softmax"))
+    self.model.add(Dense(units=1, activation="sigmoid"))
 
     # Compile the model
-    self.model.compile(loss="mean_squared_error", optimizer=adam, metrics=["accuracy", Recall()])
+    self.model.compile(loss="binary_crossentropy", optimizer=adam, metrics=["accuracy"]) # Recal()
 
   # TODO: Make a repeat to persist the shape (10, 299, 299, 3) in a list to train the model
   def load_frames_from_videos(self, dataframe: pd.DataFrame):
@@ -66,6 +66,7 @@ class HumanViolenceDetector:
     video_paths = list(dataframe["video_name"].values)
     tokenizer.fit_on_texts(dataframe["class"].values)
     labels = np.array([[token[0]-1] for token in tokenizer.texts_to_sequences(dataframe["class"].values)])
+    # labels = np.array(tokenizer.texts_to_sequences(dataframe["class"].values))
 
     out_data = []
     out_labels = []
@@ -75,7 +76,7 @@ class HumanViolenceDetector:
       out_data.append(frames)
       out_labels.append(labels[index_video_path])
 
-    return out_data, out_labels
+    return np.array(out_data), np.array(out_labels)
 
   def prepare_data(self):
     train_df, test_df = train_test_split(self.preprocessing.dataset, test_size = 0.30, stratify=self.preprocessing.dataset['class'])
@@ -92,7 +93,7 @@ class HumanViolenceDetector:
 
     self.label_vocabulary = np.unique(self.preprocessing.train_data["class"])
 
-  def run(self, train_data):
+  def run(self, train_data: np.ndarray, train_labels: np.ndarray):
     weights_filepath = f"weights/best-weights-{str(date.today())}.h5"
 
     # Config callback's
@@ -102,10 +103,10 @@ class HumanViolenceDetector:
 
     # plot_loss = PlotLossesCallback()
 
-    train_labels = test_labels = utils.to_categorical(self.label_vocabulary, 2)
-
+    # train_labels = test_labels = utils.to_categorical(self.label_vocabulary, 1)
+    # print(train_data.shape, train_labels.shape)
     history = self.model.fit(
-      # [train_data[0],train_data[1]],
+      train_data,
       train_labels,
       validation_split=0.1,
       epochs=EPOCHS,
@@ -113,9 +114,20 @@ class HumanViolenceDetector:
       batch_size=BATCH_SIZE
     )
 
+    return history
+
 violence_detector = HumanViolenceDetector()
+violence_detector.create()
 violence_detector.prepare_data()
-out_data, out_labels = violence_detector.load_frames_from_videos(dataframe=violence_detector.preprocessing.train_data)
 
-print(f"data length: {len(out_data)}\nlabels length: {len(out_labels)}\n")
+train_data, train_labels = violence_detector.load_frames_from_videos(dataframe=violence_detector.preprocessing.train_data)
+print("\n#### Training Data ####\n")
+print(f"\tdata shape: {np.array(train_data).shape}\n\tlabels shape: {np.array(train_labels).shape}\n\n")
 
+test_out_data, test_out_labels = violence_detector.load_frames_from_videos(dataframe=violence_detector.preprocessing.test_data)
+print("#### Testing Data ####\n")
+print(f"\tdata shape: {np.array(test_out_data).shape}\n\tlabels shape: {np.array(test_out_labels).shape}\n\n")
+
+_history = violence_detector.run(train_data, train_labels)
+
+print(f"traing history: {_history}")
