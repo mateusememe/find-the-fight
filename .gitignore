@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+src/pretreined/openpose/
+
 # Distribution / packaging
 .Python
 build/
