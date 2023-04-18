@@ -67,7 +67,7 @@ for i in range(25):
 
 
 for i in range(len(points)):
-  cv2.circle(image, points[i], 4, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
+  cv2.circle(image, points[i], 1, (0, 255, 255), thickness=-1, lineType=cv2.FILLED)
 
 
 cv2.imshow('Image', image)
