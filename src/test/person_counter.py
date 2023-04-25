@@ -6,7 +6,8 @@ sys.path.append("src//modules")
 
 import imageutils
 
-img = cv2.imread('./src/test/images/persons-4.png')
+img = cv2.imread('./src/test/images/persons-5.png')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 def person_detection_with_hog():
   hog = cv2.HOGDescriptor()
@@ -68,13 +69,13 @@ def person_detection_with_hog():
   cv2.destroyAllWindows()
 
 # Não FUNCIONA AINDA...
-# classifier = cv2.CascadeClassifier('./src/test/haarcascade_fullbody.xml')
-# rects = classifier.detectMultiScale(img)
+classifier = cv2.CascadeClassifier('.//src//test//haarcascade_fullbody.xml')
+rects = classifier.detectMultiScale(gray, 1.3, 5)
 
-# print(rects)
+print(rects)
 
-# for (x, y, w, h) in rects:
-#     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+for (x, y, w, h) in rects:
+    cv2.rectangle(gray, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-# cv2.imshow('image', img)
-# cv2.waitKey(0)
+cv2.imshow('image', gray)
+cv2.waitKey(0)
