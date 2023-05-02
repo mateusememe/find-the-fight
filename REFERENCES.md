@@ -13,6 +13,9 @@
 * Referencia para usar a FLASK API [FLASK API WEB APPLICATION USE](https://github.com/krishnaik06/Flask-Web-Framework/blob/main/Tutorial%207/templates/index.html)
 * Referencia para Tracking de Detecção de Violência Usando YOLO [LINK](https://github.com/TheAnkurGoswami/Human-Violence-Detection)
 * OpenPose para TensorFlow [LINK-1](https://github.com/infocom-tpo/tf-openpose) [LINK-2](https://github.com/Zumbalamambo/tf-openpose) [LINK-3](https://pypi.org/project/tf-pose/) [LINK-4](https://github.com/ZheC/tf-pose-estimation)
+* Referencia para Salvar 30 segundos do video detectado [LINK-1](https://github.com/mamonraab/Real-Time-Violence-Detection-in-Video-/blob/master/localfile-testing.ipynb) [LINK-2](https://www.youtube.com/watch?v=qeFrjFa5Rxc&t=209s)
+* Formas de Validar o Modelo [LINK](https://www.youtube.com/watch?v=PWMlR8eVgHc)
+* Referencia de Outra Rede que usa o ConvLSTM [LINK](https://github.com/mmaher22/ViolenceDetector/)
 
 ### Referencias Sobre Repos OpenPose
 
@@ -25,3 +28,7 @@
 ### Datasets
 
 * [Surveillance Fight Detection Dataset](https://github.com/seymanurakti/fight-detection-surv-dataset)
+
+### Some Papers
+
+* [Robust Real-Time Violence Detection in Video Using CNN And LSTM (Using VGG19)](https://sci-hub.se/10.1109/SCCS.2019.8852616)
